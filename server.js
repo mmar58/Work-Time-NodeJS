@@ -5,14 +5,15 @@ const { scrapWorkTime, convertSecondsIntoTime } = require("./scripts/workTimeScr
 const app = express();
 app.use(express.json());
 const port = 88;
-
+const cors = require("cors");
+app.use(cors()); // Allow all origins
 let db;
 
 function handleDisconnect() {
   db = mysql.createConnection({
     host: "localhost",
     user: "root",
-    password: "123456",
+    password: "",
     database: "job_report",
   });
 
@@ -85,7 +86,30 @@ function updateInDatabase(date, hours, minutes, note, callback) {
     }
   });
 }
-
+// API to get work data based on date range
+app.get("/work-data", (req, res) => {
+  let { startDate, endDate } = req.query;
+  
+  if (!startDate) {
+    return res.status(400).json({ error: "Start date is required" });
+  }
+  
+  let query = "SELECT * FROM dailywork WHERE date = ?";
+  let params = [startDate];
+  
+  if (endDate) {
+    query = "SELECT * FROM dailywork WHERE date BETWEEN ? AND ?";
+    params = [startDate, endDate];
+  }
+  
+  db.query(query, params, (err, results) => {
+    if (err) {
+      console.error("❌ Database query failed:", err);
+      return res.status(500).json({ error: "Database query failed" });
+    }
+    res.json(results);
+  });
+});
 // API Endpoint
 app.get("/work-time", (req, res) => {
   let dates = req.query.dates ? req.query.dates.split(",") : [new Date().toISOString().split("T")[0]];

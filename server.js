@@ -37,10 +37,13 @@ function handleDisconnect() {
   });
 }
 
-handleDisconnect();
+
 
 // Update Database Function with Debugging Logs
 function updateInDatabase(date, hours, minutes, note, callback) {
+  if(db==null){
+    handleDisconnect();
+  }
   console.log(`🔍 Checking database for existing record on date: ${date}`);
   let dateData = date.split("-");
   if (dateData[0].length < 3) {

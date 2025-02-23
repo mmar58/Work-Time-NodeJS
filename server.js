@@ -91,6 +91,11 @@ function updateInDatabase(date, hours, minutes, note, callback) {
 }
 // API to get work data based on date range
 app.get("/work-data", (req, res) => {
+  if(db==null){
+    handleDisconnect();
+  }
+  console.log("Node.js Time Zone:", Intl.DateTimeFormat().resolvedOptions().timeZone);
+  console.log("Current Time in Node.js:", new Date().toString());
   let { startDate, endDate } = req.query;
   
   if (!startDate) {
@@ -101,15 +106,16 @@ app.get("/work-data", (req, res) => {
   let params = [startDate];
   
   if (endDate) {
-    query = "SELECT * FROM dailywork WHERE date BETWEEN ? AND ?";
+    query = "SELECT DATE_FORMAT(date, '%Y-%m-%d') AS date, hour, minutes, detailedWork, extraminutes FROM dailywork WHERE date BETWEEN '2025-02-20' AND '2025-02-26'";
     params = [startDate, endDate];
   }
-  
-  db.query(query, params, (err, results) => {
+  console.log("📌 Query:",params)
+  db.query(query, (err, results) => {
     if (err) {
       console.error("❌ Database query failed:", err);
       return res.status(500).json({ error: "Database query failed" });
     }
+    console.log(results)
     res.json(results);
   });
 });

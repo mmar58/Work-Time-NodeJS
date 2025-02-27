@@ -1,5 +1,7 @@
 const express = require("express");
 const mysql = require("mysql2");
+const moment = require("moment-timezone");  // Add this at the top of your file
+const userTimeZone = "Asia/Dhaka";  // Change this to your correct timezone, e.g., "Asia/Dhaka"
 const { scrapWorkTime, convertSecondsIntoTime } = require("./scripts/workTimeScraper");
 
 const app = express();
@@ -41,7 +43,7 @@ function handleDisconnect() {
 
 // Update Database Function with Debugging Logs
 function updateInDatabase(date, hours, minutes, note, callback) {
-  if(db==null){
+  if (db == null) {
     handleDisconnect();
   }
   console.log(`🔍 Checking database for existing record on date: ${date}`);
@@ -91,26 +93,24 @@ function updateInDatabase(date, hours, minutes, note, callback) {
 }
 // API to get work data based on date range
 app.get("/work-data", (req, res) => {
-  if(db==null){
+  if (db == null) {
     handleDisconnect();
   }
-  console.log("Node.js Time Zone:", Intl.DateTimeFormat().resolvedOptions().timeZone);
-  console.log("Current Time in Node.js:", new Date().toString());
   let { startDate, endDate } = req.query;
-  
+
   if (!startDate) {
     return res.status(400).json({ error: "Start date is required" });
   }
-  
+
   let query = "SELECT * FROM dailywork WHERE date = ?";
   let params = [startDate];
-  
+
   if (endDate) {
-    query = "SELECT DATE_FORMAT(date, '%Y-%m-%d') AS date, hour, minutes, detailedWork, extraminutes FROM dailywork WHERE date BETWEEN '2025-02-20' AND '2025-02-26'";
+    query = "SELECT DATE_FORMAT(date, '%Y-%m-%d') AS date, hour, minutes, detailedWork, extraminutes FROM dailywork WHERE date BETWEEN ? AND ?";
     params = [startDate, endDate];
   }
-  console.log("📌 Query:",params)
-  db.query(query, (err, results) => {
+  console.log("📌 Query:", params)
+  db.query(query, params, (err, results) => {
     if (err) {
       console.error("❌ Database query failed:", err);
       return res.status(500).json({ error: "Database query failed" });
@@ -121,7 +121,9 @@ app.get("/work-data", (req, res) => {
 });
 // API Endpoint
 app.get("/work-time", (req, res) => {
-  let dates = req.query.dates ? req.query.dates.split(",") : [new Date().toISOString().split("T")[0]];
+  let dates = req.query.dates
+    ? req.query.dates.split(",")
+    : [moment().tz(userTimeZone).format("YYYY-MM-DD")];
   let results = [];
   console.log(dates);
   dates.forEach((date) => {

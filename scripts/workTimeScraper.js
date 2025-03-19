@@ -44,10 +44,12 @@ function scrapWorkTime(curDate) {
       if (i === 1) {
         if (text === "Monitoring resumed by the user") {
           startTime = temptime;
+          startTimeText=time
           startingTimeSet = true;
         } else {
           if (temptime < 20 * 60) {
             startTime = 0;
+            startTimeText="00:00:00"
           } else {
             startTime = temptime;
             startTimeText=time

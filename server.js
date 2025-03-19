@@ -120,7 +120,7 @@ app.get("/work-data", (req, res) => {
   });
 });
 // API Endpoint
-app.get("/work-time", (req, res) => {
+app.get("/worktime", (req, res) => {
   let dates = req.query.dates
     ? req.query.dates.split(",")
     : [moment().tz(userTimeZone).format("YYYY-MM-DD")];

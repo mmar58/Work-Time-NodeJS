@@ -150,7 +150,20 @@ app.get("/worktime", (req, res) => {
 
   res.json(results);
 });
-
+app.get("/hourlyRate", (req, res) => {
+  if(db==null){
+    handleDisconnect();
+  }
+  console.log("Searching for hourly rate")
+  let query='SELECT price FROM hourrate ORDER BY date DESC LIMIT 1'
+  db.query(query,(err,results)=>{
+    if(err){
+      console.error("❌ Database query failed:", err);
+      return res.status(500).json({ error: "Database query failed" });
+    }
+    res.json(results[0].price)
+  })
+})
 // Start Server
 app.listen(port, () => {
   console.log("🚀 Server running on http://localhost:" + port);

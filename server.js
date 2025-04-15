@@ -3,7 +3,7 @@ const mysql = require("mysql2");
 const moment = require("moment-timezone");  // Add this at the top of your file
 const userTimeZone = "Asia/Dhaka";  // Change this to your correct timezone, e.g., "Asia/Dhaka"
 const { scrapWorkTime, convertSecondsIntoTime } = require("./scripts/workTimeScraper");
-
+const fs = require("fs")
 const app = express();
 app.use(express.json());
 const port = 88;
@@ -42,7 +42,7 @@ function handleDisconnect() {
 
 
 // Update Database Function with Debugging Logs
-function updateInDatabase(date, hours, minutes, note, callback) {
+function updateInDatabase(date, hours, minutes,seconds, note, callback) {
   if (db == null) {
     handleDisconnect();
   }
@@ -63,10 +63,10 @@ function updateInDatabase(date, hours, minutes, note, callback) {
     if (result.length === 0) {
       console.log(`🆕 No record found for ${date}, inserting new record...`);
       const sqlInsert =
-        "INSERT INTO dailywork (date, hour, minutes, detailedWork) VALUES (?, ?, ?, ?)";
-      console.log("📌 SQL Insert:", sqlInsert, [date, hours, minutes, note]);
+        "INSERT INTO dailywork (date, hour, minutes,seconds, detailedWork) VALUES (?, ?, ?, ?,?)";
+      console.log("📌 SQL Insert:", sqlInsert, [date, hours, minutes,seconds, note]);
 
-      db.query(sqlInsert, [date, hours, minutes, note], (insertErr) => {
+      db.query(sqlInsert, [date, hours, minutes,seconds, note], (insertErr) => {
         if (insertErr) {
           console.error("❌ Error inserting into database:", insertErr);
           return callback(insertErr);
@@ -77,10 +77,10 @@ function updateInDatabase(date, hours, minutes, note, callback) {
     } else {
       console.log(`🔄 Updating existing record for ${date}...`);
       const sqlUpdate =
-        "UPDATE dailywork SET hour = ?, minutes = ?, detailedWork = ? WHERE date = ?";
+        "UPDATE dailywork SET hour = ?, minutes = ?, seconds = ?, detailedWork = ? WHERE date = ?";
       console.log("📌 SQL Update:", sqlUpdate, [hours, minutes, note, date]);
 
-      db.query(sqlUpdate, [hours, minutes, note, date], (updateErr) => {
+      db.query(sqlUpdate, [hours, minutes,seconds, note, date], (updateErr) => {
         if (updateErr) {
           console.error("❌ Error updating database:", updateErr);
           return callback(updateErr);
@@ -136,16 +136,16 @@ app.get("/worktime", (req, res) => {
     let { totalWorkedTime, totalWorkedTimeNote } = scrapWorkTime(date);
     let { hours, minutes, seconds } = convertSecondsIntoTime(totalWorkedTime);
 
-    console.log(`🕒 Computed work time - Hours: ${hours}, Minutes: ${minutes}, Seconds: ${seconds}, Note: ${totalWorkedTimeNote}`);
+    console.log(`🕒 Computed work time - Hours: ${hours}, Minutes: ${minutes}, Seconds: ${seconds}, detailedWork: ${totalWorkedTimeNote}`);
 
-    updateInDatabase(date, hours, minutes, JSON.stringify(totalWorkedTimeNote), (err) => {
+    updateInDatabase(date, hours, minutes, seconds, JSON.stringify(totalWorkedTimeNote), (err) => {
       if (err) {
         console.error(`❌ Database update failed for ${date}`, err);
         return res.status(500).json({ error: `Database update failed for ${date}` });
       }
     });
 
-    results.push({ date, hours, minutes, seconds, note: totalWorkedTimeNote });
+    results.push({ date, hours, minutes, seconds, detailedWork: JSON.stringify(totalWorkedTimeNote) });
   });
 
   res.json(results);
@@ -163,6 +163,31 @@ app.get("/hourlyRate", (req, res) => {
     }
     res.json(results[0].price)
   })
+})
+let targetDatakey="targetData.json"
+app.get("/getTargetHours", (req, res) => {
+  
+  if(fs.existsSync(targetDatakey)){
+    let exitingData=fs.readFileSync(targetDatakey)
+    exitingData=JSON.parse(exitingData)
+    res.json(exitingData.targetHours)
+  }
+  else{
+    res.json(40)
+  }
+})
+app.get("/setTargetHours", (req, res) => {
+  let targetHours=parseInt(req.query.hours)
+  if(fs.existsSync(targetDatakey)){
+    let exitingData=fs.readFileSync(targetDatakey)
+    exitingData=JSON.parse(exitingData)
+    exitingData.targetHours=targetHours
+    fs.writeFileSync(targetDatakey,JSON.stringify(exitingData))
+  }
+  else{
+    fs.writeFileSync(targetDatakey,JSON.stringify({targetHours}))
+  }
+  res.json(targetHours)
 })
 // Start Server
 app.listen(port, () => {

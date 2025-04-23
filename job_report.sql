@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Apr 15, 2025 at 09:00 PM
+-- Generation Time: Apr 21, 2025 at 08:43 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -29,7 +29,7 @@ SET time_zone = "+00:00";
 
 CREATE TABLE `dailywork` (
   `date` date NOT NULL,
-  `hour` tinyint(10) NOT NULL,
+  `hours` tinyint(10) NOT NULL,
   `minutes` tinyint(10) NOT NULL,
   `seconds` tinyint(10) NOT NULL,
   `detailedWork` text NOT NULL DEFAULT '',
@@ -40,7 +40,7 @@ CREATE TABLE `dailywork` (
 -- Dumping data for table `dailywork`
 --
 
-INSERT INTO `dailywork` (`date`, `hour`, `minutes`, `seconds`, `detailedWork`, `extraminutes`) VALUES
+INSERT INTO `dailywork` (`date`, `hours`, `minutes`, `seconds`, `detailedWork`, `extraminutes`) VALUES
 ('2025-02-19', 3, 8, 0, '[{\"startTime\":\"00:09:13\",\"endTime\":\"0:9:13\",\"duration\":\"0:9:13\"},{\"startTime\":\"00:09:13\",\"endTime\":\"1:15:21\",\"duration\":\"0:0:0\"},{\"startTime\":\"00:09:13\",\"endTime\":\"9:38:15\",\"duration\":\"1:5:30\"},{\"startTime\":\"00:09:13\",\"endTime\":\"11:23:12\",\"duration\":\"1:4:23\"},{\"startTime\":\"12:27:11\",\"endTime\":\"12:31:20\",\"duration\":\"0:4:9\"},{\"startTime\":\"18:50:25\",\"endTime\":\"19:36:03\",\"duration\":\"0:45:38\"}]', 0),
 ('2024-09-24', 2, 49, 0, '11:20:59-13:04:22 01:43:23\n16:54:48-16:54:48 00:00:00\n21:14:00-21:43:13 00:29:13\n22:43:57-23:20:22 00:36:25\n23:20:45-23:20:45 00:00:00\n', 0),
 ('2024-09-19', 2, 15, 0, '16:14:10-18:08:05 01:53:55\n18:49:44-19:07:12 00:17:28\n20:48:31-20:52:29 00:03:58\n', 42),
@@ -340,7 +340,7 @@ INSERT INTO `dailywork` (`date`, `hour`, `minutes`, `seconds`, `detailedWork`, `
 ('2024-09-10', 5, 17, 0, '03:39:47-04:37:15 00:57:28\n12:16:35-12:16:35 00:00:00\n14:45:00-16:05:27 01:20:27\n19:33:18-22:32:30 02:59:12', 0),
 ('2024-09-11', 5, 47, 0, '08:20:45-10:40:05 02:19:20\n11:12:58-10:40:02 00:00:00\n11:12:58-12:23:00 01:10:02\n13:00:52-13:00:52 00:00:00\n21:28:37-23:46:15 02:17:38', 32),
 ('2024-09-12', 2, 48, 0, '00:07:15-00:12:21 00:05:06\n00:12:28-00:14:06 00:01:38\n13:00:11-15:05:26 02:05:15\n18:30:48-19:06:45 00:35:57\n', 0);
-INSERT INTO `dailywork` (`date`, `hour`, `minutes`, `seconds`, `detailedWork`, `extraminutes`) VALUES
+INSERT INTO `dailywork` (`date`, `hours`, `minutes`, `seconds`, `detailedWork`, `extraminutes`) VALUES
 ('2024-09-13', 4, 58, 0, '00:09:48-01:54:25 01:44:37\n02:00:32-02:00:32 00:00:00\n09:35:40-11:56:36 02:20:56\n13:40:14-13:46:31 00:06:17\n19:51:26-20:26:45 00:35:19\n23:49:23-24:00:00 00:10:37\n', 0),
 ('2024-09-14', 2, 2, 0, '00:00:00-02:01:50 02:01:50\n', 0),
 ('2024-09-15', 0, 0, 0, '', 0),
@@ -348,7 +348,12 @@ INSERT INTO `dailywork` (`date`, `hour`, `minutes`, `seconds`, `detailedWork`, `
 ('2025-04-13', 2, 53, 2, '[{\"startTime\":\"00:30:50\",\"endTime\":\"01:21:27\",\"duration\":\"0:50:37\"},{\"startTime\":\"02:03:45\",\"endTime\":\"2:3:45\",\"duration\":\"0:0:0\"},{\"startTime\":\"02:03:45\",\"endTime\":\"11:29:31\",\"duration\":\"1:18:5\"},{\"startTime\":\"11:50:46\",\"endTime\":\"11:50:47\",\"duration\":\"0:0:1\"},{\"startTime\":\"11:50:46\",\"endTime\":\"17:19:01\",\"duration\":\"0:44:19\"}]', 0),
 ('2025-04-14', 3, 10, 14, '[{\"startTime\":\"01:01:35\",\"endTime\":\"01:44:19\",\"duration\":\"0:42:44\"},{\"startTime\":\"12:52:43\",\"endTime\":\"13:57:38\",\"duration\":\"1:4:55\"},{\"startTime\":\"14:17:39\",\"endTime\":\"14:58:28\",\"duration\":\"0:40:49\"},{\"startTime\":\"18:57:08\",\"endTime\":\"19:38:54\",\"duration\":\"0:41:46\"},{\"startTime\":\"19:58:00\",\"endTime\":\"19:58:00\",\"duration\":\"0:0:0\"}]', 0),
 ('2025-04-15', 4, 17, 6, '[{\"startTime\":\"15:12:24\",\"endTime\":\"15:12:24\",\"duration\":\"0:0:0\"},{\"startTime\":\"15:12:24\",\"endTime\":\"18:06:43\",\"duration\":\"1:45:29\"},{\"startTime\":\"20:35:25\",\"endTime\":\"20:52:31\",\"duration\":\"0:17:6\"},{\"startTime\":\"21:44:30\",\"endTime\":\"23:50:37\",\"duration\":\"2:6:7\"},{\"startTime\":\"23:51:36\",\"endTime\":\"24:00:00\",\"duration\":\"0:7:38\"}]', 0),
-('2025-04-16', 0, 12, 46, '[{\"startTime\":\"00:00:00\",\"endTime\":\"00:12:46\",\"duration\":\"0:12:46\"}]', 0);
+('2025-04-16', 4, 57, 38, '[{\"startTime\":\"00:00:00\",\"endTime\":\"00:12:46\",\"duration\":\"0:12:46\"},{\"startTime\":\"02:11:13\",\"endTime\":\"2:11:13\",\"duration\":\"0:0:0\"},{\"startTime\":\"02:11:13\",\"endTime\":\"3:1:33\",\"duration\":\"0:9:53\"},{\"startTime\":\"02:11:13\",\"endTime\":\"14:21:56\",\"duration\":\"2:12:58\"},{\"startTime\":\"17:01:34\",\"endTime\":\"19:12:49\",\"duration\":\"2:11:15\"},{\"startTime\":\"23:00:20\",\"endTime\":\"23:11:06\",\"duration\":\"0:10:46\"}]', 0),
+('2025-04-17', 2, 36, 34, '[{\"startTime\":\"00:13:52\",\"endTime\":\"01:35:03\",\"duration\":\"1:21:11\"},{\"startTime\":\"02:09:02\",\"endTime\":\"2:9:2\",\"duration\":\"0:0:0\"},{\"startTime\":\"02:09:02\",\"endTime\":\"11:40:15\",\"duration\":\"0:0:0\"},{\"startTime\":\"02:09:02\",\"endTime\":\"15:48:35\",\"duration\":\"0:46:32\"},{\"startTime\":\"16:16:39\",\"endTime\":\"16:45:30\",\"duration\":\"0:28:51\"}]', 0),
+('2025-04-18', 2, 9, 4, '[{\"startTime\":\"00:43:06\",\"endTime\":\"01:50:37\",\"duration\":\"1:7:31\"},{\"startTime\":\"01:51:24\",\"endTime\":\"02:11:17\",\"duration\":\"0:19:53\"},{\"startTime\":\"02:31:08\",\"endTime\":\"2:31:8\",\"duration\":\"0:0:0\"},{\"startTime\":\"02:31:08\",\"endTime\":\"16:30:42\",\"duration\":\"0:0:0\"},{\"startTime\":\"02:31:08\",\"endTime\":\"22:59:59\",\"duration\":\"0:41:40\"}]', 0),
+('2025-04-19', 1, 31, 40, '[{\"startTime\":\"01:41:26\",\"endTime\":\"1:41:26\",\"duration\":\"0:0:0\"},{\"startTime\":\"01:41:26\",\"endTime\":\"14:57:54\",\"duration\":\"0:28:47\"},{\"startTime\":\"15:21:56\",\"endTime\":\"15:49:47\",\"duration\":\"0:27:51\"},{\"startTime\":\"19:21:10\",\"endTime\":\"19:56:12\",\"duration\":\"0:35:2\"}]', 0),
+('2025-04-20', 3, 4, 40, '[{\"startTime\":\"00:11:58\",\"endTime\":\"00:12:27\",\"duration\":\"0:0:29\"},{\"startTime\":\"14:15:04\",\"endTime\":\"15:48:34\",\"duration\":\"1:33:30\"},{\"startTime\":\"17:23:21\",\"endTime\":\"17:58:36\",\"duration\":\"0:35:15\"},{\"startTime\":\"19:21:18\",\"endTime\":\"20:16:44\",\"duration\":\"0:55:26\"}]', 0),
+('2025-04-21', 1, 58, 36, '00:37:16-01:29:53 00:52:37\n02:15:43-02:15:43 00:00:00\n10:24:08-11:29:55 01:05:47', 0);
 
 -- --------------------------------------------------------
 

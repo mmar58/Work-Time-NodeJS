@@ -63,7 +63,7 @@ function updateInDatabase(date, hours, minutes,seconds, note, callback) {
     if (result.length === 0) {
       console.log(`🆕 No record found for ${date}, inserting new record...`);
       const sqlInsert =
-        "INSERT INTO dailywork (date, hour, minutes,seconds, detailedWork) VALUES (?, ?, ?, ?,?)";
+        "INSERT INTO dailywork (date, hours, minutes,seconds, detailedWork) VALUES (?, ?, ?, ?,?)";
       console.log("📌 SQL Insert:", sqlInsert, [date, hours, minutes,seconds, note]);
 
       db.query(sqlInsert, [date, hours, minutes,seconds, note], (insertErr) => {
@@ -77,7 +77,7 @@ function updateInDatabase(date, hours, minutes,seconds, note, callback) {
     } else {
       console.log(`🔄 Updating existing record for ${date}...`);
       const sqlUpdate =
-        "UPDATE dailywork SET hour = ?, minutes = ?, seconds = ?, detailedWork = ? WHERE date = ?";
+        "UPDATE dailywork SET hours = ?, minutes = ?, seconds = ?, detailedWork = ? WHERE date = ?";
       console.log("📌 SQL Update:", sqlUpdate, [hours, minutes, note, date]);
 
       db.query(sqlUpdate, [hours, minutes,seconds, note, date], (updateErr) => {
@@ -106,7 +106,7 @@ app.get("/work-data", (req, res) => {
   let params = [startDate];
 
   if (endDate) {
-    query = "SELECT DATE_FORMAT(date, '%Y-%m-%d') AS date, hour, minutes, detailedWork, extraminutes FROM dailywork WHERE date BETWEEN ? AND ?";
+    query = "SELECT DATE_FORMAT(date, '%Y-%m-%d') AS date, hours, minutes, seconds, detailedWork, extraminutes FROM dailywork WHERE date BETWEEN ? AND ?";
     params = [startDate, endDate];
   }
   console.log("📌 Query:", params)

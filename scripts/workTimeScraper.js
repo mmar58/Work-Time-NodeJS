@@ -2,15 +2,15 @@ const fs = require("fs");
 const cheerio = require("cheerio");
 let totalWorkedTimeNote = [];
 
-function addTotalWorkTimeNote(startTime,endTime,duration){
-  totalWorkedTimeNote.push({startTime,endTime,duration})
+function addTotalWorkTimeNote(startTime, endTime, duration) {
+  totalWorkedTimeNote.push({ startTime, endTime, duration })
 }
 function convertToTime(timeText) {
   let data = timeText.split(":").map(Number);
   return (data[0] * 60 + data[1]) * 60 + data[2];
 }
 function convertSecondsToTimeText(totalSeconds) {
-  let time=convertSecondsIntoTime(totalSeconds)
+  let time = convertSecondsIntoTime(totalSeconds)
   return `${time.hours}:${time.minutes}:${time.seconds}`;
 }
 function convertSecondsIntoTime(totalSeconds) {
@@ -27,9 +27,10 @@ function scrapWorkTime(curDate) {
   let startingTimeSet = false;
   let lastTimeAccessed = 0;
   let lastEndTime = 0;
-  let  startTimeText=""
+  let startTimeText = "";
+  let lastTimeAccessedText = "";
   let filePath = `C:/Program Files (x86)/StaffCounter/logs/USER/${curDate}.htm`;
-  totalWorkedTimeNote=[]
+  totalWorkedTimeNote = [];
   try {
     let fileContent = fs.readFileSync(filePath, "utf-8");
     let $ = cheerio.load(fileContent);
@@ -44,15 +45,15 @@ function scrapWorkTime(curDate) {
       if (i === 1) {
         if (text === "Monitoring resumed by the user") {
           startTime = temptime;
-          startTimeText=time
+          startTimeText = time;
           startingTimeSet = true;
         } else {
           if (temptime < 20 * 60) {
             startTime = 0;
-            startTimeText="00:00:00"
+            startTimeText = "00:00:00";
           } else {
             startTime = temptime;
-            startTimeText=time
+            startTimeText = time;
             startingTimeSet = true;
           }
         }
@@ -61,32 +62,36 @@ function scrapWorkTime(curDate) {
           startingTimeSet = false;
           totalWorkedTime += temptime - startTime;
           lastEndTime = temptime;
-          addTotalWorkTimeNote(startTimeText,time,convertSecondsToTimeText(temptime - startTime))
+          addTotalWorkTimeNote(startTimeText, time, convertSecondsToTimeText(temptime - startTime));
         } else {
           if (i === all_p.length - 1) {
             if (24 * 60 * 60 - temptime < 16 * 60) {
               totalWorkedTime += 24 * 60 * 60 - startTime;
-              addTotalWorkTimeNote(startTimeText,"24:00:00",convertSecondsToTimeText(temptime - startTime))
+              addTotalWorkTimeNote(startTimeText, "24:00:00", convertSecondsToTimeText(temptime - startTime));
             } else {
               totalWorkedTime += temptime - startTime;
               lastEndTime = temptime;
-              addTotalWorkTimeNote(startTimeText,time,convertSecondsToTimeText(temptime - startTime))
+              addTotalWorkTimeNote(startTimeText, time, convertSecondsToTimeText(temptime - startTime));
             }
           } else if (temptime < startTime) {
             startTime = temptime;
-            startTimeText=time
+            startTimeText = time;
+            lastTimeAccessed = temptime;
           } else if (temptime - lastTimeAccessed > 30 * 60) {
             totalWorkedTime += lastTimeAccessed - startTime;
-            addTotalWorkTimeNote(startTimeText,convertSecondsToTimeText(lastTimeAccessed),convertSecondsToTimeText(lastTimeAccessed - startTime))
+            // Use lastTimeAccessedText instead of converting seconds
+            addTotalWorkTimeNote(startTimeText, lastTimeAccessedText, convertSecondsToTimeText(lastTimeAccessed - startTime));
             startTime = temptime;
+            startTimeText = time; // Update start time for the NEW block
           }
         }
       } else if (text === "Monitoring resumed by the user" || temptime > lastEndTime) {
         startTime = temptime;
         startingTimeSet = true;
-        startTimeText=time
+        startTimeText = time;
       }
       lastTimeAccessed = temptime;
+      lastTimeAccessedText = time; // Track the text of the last accessed time
     });
 
     return { totalWorkedTime, totalWorkedTimeNote };

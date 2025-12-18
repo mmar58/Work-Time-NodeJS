@@ -4,7 +4,9 @@
 
 ## Overview
 
-This API scrapes work time data from StaffCounter HTML logs, processes it, and stores/retrieves it from a MySQL database. It also manages target work hours and hourly rate settings.
+This API scrapes work time data from **StaffCounter** HTML logs (locally stored), processes it, and stores/retrieves it from a MySQL database. It also manages target work hours and hourly rate settings.
+
+> **Note:** The scraper relies on log files located at `C:/Program Files (x86)/StaffCounter/logs/USER/`. Ensure this path exists and is accessible.
 
 ---
 
@@ -29,10 +31,11 @@ This API scrapes work time data from StaffCounter HTML logs, processes it, and s
       "hours": Number,
       "minutes": Number,
       "seconds": Number,
-      "detailedWork": String,
+      "detailedWork": "[{\"startTime\":\"...\",\"endTime\":\"...\",\"duration\":\"...\"}, ...]", // JSON String
       "extraminutes": Number
     }
   ]
+  > **Note:** `detailedWork` is a JSON stringified array of objects containing work sessions.
   ```
 - **Errors:**  
   - `400`: Start date is required  
@@ -52,7 +55,7 @@ This API scrapes work time data from StaffCounter HTML logs, processes it, and s
       "hours": Number,
       "minutes": Number,
       "seconds": Number,
-      "detailedWork": String
+      "detailedWork": "[{\"startTime\":\"HH:MM:SS\",\"endTime\":\"HH:MM:SS\",\"duration\":\"HH:MM:SS\"}, ...]" // JSON String
     }
   ]
   ```

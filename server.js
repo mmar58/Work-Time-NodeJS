@@ -38,7 +38,7 @@ function handleDisconnect() {
       console.log("🔄 Reconnecting to database...");
       handleDisconnect();
     } else {
-      console.log("Error in database connection",err)
+      console.log("Error in database connection", err)
       handleDisconnect()
     }
   });
@@ -47,7 +47,7 @@ function handleDisconnect() {
 
 
 // Update Database Function with Debugging Logs
-function updateInDatabase(date, hours, minutes,seconds, note, callback) {
+function updateInDatabase(date, hours, minutes, seconds, note, callback) {
   if (db == null) {
     handleDisconnect();
   }
@@ -63,34 +63,34 @@ function updateInDatabase(date, hours, minutes,seconds, note, callback) {
       return callback(err);
     }
 
-  // console.log("🔎 Query result:", result);
+    // console.log("🔎 Query result:", result);
 
     if (result.length === 0) {
-  // console.log(`🆕 No record found for ${date}, inserting new record...`);
+      // console.log(`🆕 No record found for ${date}, inserting new record...`);
       const sqlInsert =
         "INSERT INTO dailywork (date, hours, minutes,seconds, detailedWork) VALUES (?, ?, ?, ?,?)";
-  // console.log("📌 SQL Insert:", sqlInsert, [date, hours, minutes,seconds, note]);
+      // console.log("📌 SQL Insert:", sqlInsert, [date, hours, minutes,seconds, note]);
 
-      db.query(sqlInsert, [date, hours, minutes,seconds, note], (insertErr) => {
+      db.query(sqlInsert, [date, hours, minutes, seconds, note], (insertErr) => {
         if (insertErr) {
           console.error("❌ Error inserting into database:", insertErr);
           return callback(insertErr);
         }
-  // console.log(`✅ Successfully inserted record for ${date}`);
+        // console.log(`✅ Successfully inserted record for ${date}`);
         callback(null);
       });
     } else {
-  // console.log(`🔄 Updating existing record for ${date}...`);
+      // console.log(`🔄 Updating existing record for ${date}...`);
       const sqlUpdate =
         "UPDATE dailywork SET hours = ?, minutes = ?, seconds = ?, detailedWork = ? WHERE date = ?";
-  // console.log("📌 SQL Update:", sqlUpdate, [hours, minutes, note, date]);
+      // console.log("📌 SQL Update:", sqlUpdate, [hours, minutes, note, date]);
 
-      db.query(sqlUpdate, [hours, minutes,seconds, note, date], (updateErr) => {
+      db.query(sqlUpdate, [hours, minutes, seconds, note, date], (updateErr) => {
         if (updateErr) {
           console.error("❌ Error updating database:", updateErr);
           return callback(updateErr);
         }
-  // console.log(`✅ Successfully updated record for ${date}`);
+        // console.log(`✅ Successfully updated record for ${date}`);
         callback(null);
       });
     }
@@ -123,7 +123,7 @@ app.get("/work-data", (req, res) => {
       console.error("❌ Database query failed:", err);
       return res.status(500).json({ error: "Database query failed" });
     }
-  // console.log(results)
+    // console.log(results)
     res.json(results);
   });
 });
@@ -139,12 +139,12 @@ app.get("/worktime", (req, res) => {
     if (dateData[0].length > 2) {
       date = dateData[2] + "-" + dateData[1] + "-" + dateData[0];
     }
-  // console.log(`📅 Processing work time for date: ${date}`);
+    // console.log(`📅 Processing work time for date: ${date}`);
 
     let { totalWorkedTime, totalWorkedTimeNote } = scrapWorkTime(date);
     let { hours, minutes, seconds } = convertSecondsIntoTime(totalWorkedTime);
 
-  // console.log(`🕒 Computed work time - Hours: ${hours}, Minutes: ${minutes}, Seconds: ${seconds}, detailedWork: ${totalWorkedTimeNote}`);
+    // console.log(`🕒 Computed work time - Hours: ${hours}, Minutes: ${minutes}, Seconds: ${seconds}, detailedWork: ${totalWorkedTimeNote}`);
 
     updateInDatabase(date, hours, minutes, seconds, JSON.stringify(totalWorkedTimeNote), (err) => {
       if (err) {
@@ -159,45 +159,45 @@ app.get("/worktime", (req, res) => {
   res.json(results);
 });
 app.get("/hourlyRate", (req, res) => {
-  if(db==null){
+  if (db == null) {
     handleDisconnect();
   }
   // console.log("Searching for hourly rate")
-  let query='SELECT price FROM hourrate ORDER BY date DESC LIMIT 1'
-  db.query(query,(err,results)=>{
-    if(err){
+  let query = 'SELECT price FROM hourrate ORDER BY date DESC LIMIT 1'
+  db.query(query, (err, results) => {
+    if (err) {
       console.error("❌ Database query failed:", err);
       return res.status(500).json({ error: "Database query failed" });
     }
     res.json(results[0].price)
   })
 })
-let targetDatakey="targetData.json"
+let targetDatakey = "targetData.json"
 app.get("/getTargetHours", (req, res) => {
-  
-  if(fs.existsSync(targetDatakey)){
-    let exitingData=fs.readFileSync(targetDatakey)
-    exitingData=JSON.parse(exitingData)
+
+  if (fs.existsSync(targetDatakey)) {
+    let exitingData = fs.readFileSync(targetDatakey)
+    exitingData = JSON.parse(exitingData)
     res.json(exitingData.targetHours)
   }
-  else{
+  else {
     res.json(40)
   }
 })
 app.get("/setTargetHours", (req, res) => {
-  let targetHours=parseInt(req.query.hours)
-  if(fs.existsSync(targetDatakey)){
-    let exitingData=fs.readFileSync(targetDatakey)
-    exitingData=JSON.parse(exitingData)
-    exitingData.targetHours=targetHours
-    fs.writeFileSync(targetDatakey,JSON.stringify(exitingData))
+  let targetHours = parseInt(req.query.hours)
+  if (fs.existsSync(targetDatakey)) {
+    let exitingData = fs.readFileSync(targetDatakey)
+    exitingData = JSON.parse(exitingData)
+    exitingData.targetHours = targetHours
+    fs.writeFileSync(targetDatakey, JSON.stringify(exitingData))
   }
-  else{
-    fs.writeFileSync(targetDatakey,JSON.stringify({targetHours}))
+  else {
+    fs.writeFileSync(targetDatakey, JSON.stringify({ targetHours }))
   }
   res.json(targetHours)
 })
 // Start Server
 app.listen(port, () => {
-  // console.log("🚀 Server running on http://localhost:" + port);
+  console.log("🚀 Server running on http://localhost:" + port);
 });

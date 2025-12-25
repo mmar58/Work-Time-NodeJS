@@ -65,9 +65,10 @@ function scrapWorkTime(curDate) {
           addTotalWorkTimeNote(startTimeText, time, convertSecondsToTimeText(temptime - startTime));
         } else {
           if (i === all_p.length - 1) {
-            if (24 * 60 * 60 - temptime < 16 * 60) {
-              totalWorkedTime += 24 * 60 * 60 - startTime;
-              addTotalWorkTimeNote(startTimeText, "24:00:00", convertSecondsToTimeText(temptime - startTime));
+            let dayEndTime = 24 * 60 * 60;
+            if (dayEndTime - temptime < 16 * 60) {
+              totalWorkedTime += dayEndTime - startTime;
+              addTotalWorkTimeNote(startTimeText, "24:00:00", convertSecondsToTimeText(dayEndTime - startTime));
             } else {
               totalWorkedTime += temptime - startTime;
               lastEndTime = temptime;

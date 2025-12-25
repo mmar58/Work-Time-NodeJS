@@ -197,6 +197,48 @@ app.get("/setTargetHours", (req, res) => {
   }
   res.json(targetHours)
 })
+// Update Extra Minutes Endpoint
+app.post("/update-extra-minutes", (req, res) => {
+  if (db == null) {
+    handleDisconnect();
+  }
+  const { date, minutes } = req.body;
+  if (!date || minutes === undefined) {
+    return res.status(400).json({ error: "Date and minutes are required" });
+  }
+
+  // Check if record exists
+  db.query("SELECT * FROM dailywork WHERE date = ?", [date], (err, result) => {
+    if (err) {
+      console.error("❌ Error fetching data:", err);
+      return res.status(500).json({ error: "Database error" });
+    }
+
+    if (result.length === 0) {
+      // Insert new record
+      const sqlInsert =
+        "INSERT INTO dailywork (date, hours, minutes, seconds, detailedWork, extraminutes) VALUES (?, 0, 0, 0, '', ?)";
+      db.query(sqlInsert, [date, minutes], (insertErr) => {
+        if (insertErr) {
+          console.error("❌ Error inserting extra minutes:", insertErr);
+          return res.status(500).json({ error: "Failed to insert data" });
+        }
+        res.json({ message: "Extra minutes added successfully" });
+      });
+    } else {
+      // Update existing record
+      const sqlUpdate = "UPDATE dailywork SET extraminutes = ? WHERE date = ?";
+      db.query(sqlUpdate, [minutes, date], (updateErr) => {
+        if (updateErr) {
+          console.error("❌ Error updating extra minutes:", updateErr);
+          return res.status(500).json({ error: "Failed to update data" });
+        }
+        res.json({ message: "Extra minutes updated successfully" });
+      });
+    }
+  });
+});
+
 // Start Server
 app.listen(port, () => {
   console.log("🚀 Server running on http://localhost:" + port);

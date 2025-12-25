@@ -8,7 +8,13 @@ const app = express();
 app.use(express.json());
 const port = 88;
 const cors = require("cors");
-app.use(cors()); // Allow all origins
+app.use(cors(
+  {
+    origin: (origin, callback) => {
+      callback(null, true)
+    }
+  }
+)); // Allow all origins
 let db;
 
 function handleDisconnect() {
